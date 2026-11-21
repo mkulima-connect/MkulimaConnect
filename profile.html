@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+  <div class="auth-card">
+    <h2 class="form-title">My Profile</h2>
+    <div class="profile-pic-container" style="text-align:center; margin-bottom:1rem;">
+      <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="profile-pic">
+    </div>
+    <div class="profile-info-grid">
+      <div><strong>First Name:</strong> {{ user.first_name }}</div>
+      <div><strong>Last Name:</strong> {{ user.last_name }}</div>
+      <div><strong>Username:</strong> {{ user.username }}</div>
+      <div><strong>Role:</strong> {{ user.role }}</div>
+      <div><strong>Email:</strong> {{ user.email }}</div>
+      <div><strong>Phone Number:</strong> {{ user.phone_number|default:"Not provided" }}</div>
+      <div><strong>Location:</strong> {{ user.location|default:"Not provided" }}</div>
+      <div><strong>Bio:</strong> {{ user.bio|default:"No bio added yet." }}</div>
+      {% if request.user.is_authenticated and request.user.role == "farmer" %}
+        <div><strong>Farm Size:</strong> {{ user.farm_size|default:"Not specified" }}</div>
+        <div><strong>Crops Grown:</strong> {{ user.crops_grown|default:"No crops listed" }}</div>
+      {% endif %}
+      {% if request.user.is_authenticated and request.user.role == "buyer" %}
+        <div><strong>Preferred Crops:</strong> {{ user.preferred_crops|default:"No crops listed" }}</div>
+      {% endif %}
+    </div>
+    <div class="profile-actions">
+      <a href="{% url 'accounts:profile_edit' %}" class="btn-secondary">Edit Profile</a>
+      <a href="{% url 'products:product_list' %}" class="btn-secondary">Back to Dashboard</a>
+    </div>
+  </div>
+</div>
+<style>
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 90vh;
+  background: linear-gradient(120deg, #e5f2e5 0%, #f8f9fa 100%);
+}
+.auth-card {
+  background: #fff;
+  padding: 2.5rem 2rem 2rem 2rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  width: 100%;
+  max-width: 600px;
+}
+.form-title {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  color: #395B37;
+  font-weight: 700;
+}
+.profile-pic {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #b5cbb7;
+  margin-bottom: 0.5rem;
+}
+.profile-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem 2rem;
+  margin-bottom: 1.5rem;
+}
+@media (max-width: 700px) {
+  .profile-info-grid { grid-template-columns: 1fr; }
+}
+.profile-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+.btn-secondary {
+  background: #4F8A48;
+  color: #fff;
+  padding: 0.7rem 1.2rem;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+.btn-secondary:hover {
+  background: #395B37;
+}
+</style>
+{% endblock %}

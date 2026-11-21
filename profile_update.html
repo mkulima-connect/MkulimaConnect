@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="auth-container">
+  <div class="auth-card">
+    <h2 class="form-title">Update Profile</h2>
+    <div class="profile-pic-container" style="text-align:center; margin-bottom:1rem;">
+      <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="profile-pic">
+    </div>
+    <form method="post" enctype="multipart/form-data" class="auth-form grid-form" id="profile-update-form" novalidate>
+      {% csrf_token %}
+      <div class="form-grid">
+        {% for field in form %}
+        <div class="form-group">
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% if field.help_text %}
+            <small class="help-text">{{ field.help_text }}</small>
+          {% endif %}
+          <div class="field-error">{% for error in field.errors %}{{ error }}{% endfor %}</div>
+        </div>
+        {% endfor %}
+      </div>
+      <button type="submit" class="btn-primary submit-btn">Update Profile</button>
+    </form>
+    <a href="{% url 'products:product_list' %}" class="btn-secondary" style="margin-top:1rem; display:block; text-align:center;">Back to Dashboard</a>
+  </div>
+</div>
+<style>
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 90vh;
+  background: linear-gradient(120deg, #e5f2e5 0%, #f8f9fa 100%);
+}
+.auth-card {
+  background: #fff;
+  padding: 2.5rem 2rem 2rem 2rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  width: 100%;
+  max-width: 600px;
+}
+.form-title {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  color: #395B37;
+  font-weight: 700;
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.2rem 2rem;
+}
+@media (max-width: 700px) {
+  .form-grid { grid-template-columns: 1fr; }
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.2rem;
+}
+.form-group label {
+  font-weight: 500;
+  margin-bottom: 0.2rem;
+  color: #395B37;
+}
+.form-group input, .form-group select, .form-group textarea {
+  width: 100%;
+  padding: 0.6rem 0.7rem;
+  border-radius: 6px;
+  border: 1px solid #b5cbb7;
+  margin-top: 0.1rem;
+  font-size: 1rem;
+  background: #f8f9fa;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+  border: 1.5px solid #4F8A48;
+  outline: none;
+  box-shadow: 0 0 0 2px #e5f2e5;
+}
+.field-error {
+  margin-top: 0.2rem;
+  color: #dc3545;
+  font-size: 0.95rem;
+}
+.submit-btn {
+  margin-top: 1.5rem;
+  width: 100%;
+  padding: 0.9rem;
+  font-size: 1.1rem;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #4F8A48 60%, #395B37 100%);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: 1px;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(79,138,72,0.08);
+}
+.submit-btn:hover {
+  background: linear-gradient(90deg, #395B37 60%, #4F8A48 100%);
+  box-shadow: 0 4px 16px rgba(79,138,72,0.13);
+}
+</style>
+{% endblock %}

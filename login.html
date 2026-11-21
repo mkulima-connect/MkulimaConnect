@@ -1,0 +1,142 @@
+{% extends 'landing_page.html' %}
+{% load static %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+  <div class="auth-card">
+    <h2 class="form-title">Login to Your Account</h2>
+    {% if form.errors %}
+      <div class="form-errors">
+        {% for field in form %}
+          {% for error in field.errors %}
+            <div class="error-message">{{ error }}</div>
+          {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+          <div class="error-message">{{ error }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+    <form method="post" class="auth-form grid-form" id="login-form" novalidate>
+      {% csrf_token %}
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="id_username">Username</label>
+          <input type="text" name="username" id="id_username" placeholder="Enter your username" class="form-control" required>
+          <div class="field-error" id="error-username"></div>
+        </div>
+        <div class="form-group">
+          <label for="id_password">Password</label>
+          <input type="password" name="password" id="id_password" placeholder="Enter your password" class="form-control" required>
+          <div class="field-error" id="error-password"></div>
+        </div>
+      </div>
+      <button type="submit" class="btn-primary submit-btn">Login</button>
+    </form>
+    <p class="switch-link">
+      Don't have an account?
+      <a href="{% url 'accounts:signup' %}">Sign Up</a>
+    </p>
+  </div>
+</div>
+<style>
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 90vh;
+  background: linear-gradient(120deg, #e5f2e5 0%, #f8f9fa 100%);
+}
+.auth-card {
+  background: #fff;
+  padding: 2.5rem 2rem 2rem 2rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  width: 100%;
+  max-width: 500px;
+}
+.form-title {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  color: #395B37;
+  font-weight: 700;
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem 2rem;
+}
+@media (max-width: 700px) {
+  .form-grid { grid-template-columns: 1fr; }
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.2rem;
+}
+.form-group label {
+  font-weight: 500;
+  margin-bottom: 0.2rem;
+  color: #395B37;
+}
+.form-group input {
+  width: 100%;
+  padding: 0.6rem 0.7rem;
+  border-radius: 6px;
+  border: 1px solid #b5cbb7;
+  margin-top: 0.1rem;
+  font-size: 1rem;
+  background: #f8f9fa;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+.form-group input:focus {
+  border: 1.5px solid #4F8A48;
+  outline: none;
+  box-shadow: 0 0 0 2px #e5f2e5;
+}
+.form-errors .error-message {
+  color: #dc3545;
+  background: #ffeaea;
+  border-radius: 4px;
+  padding: 0.3rem 0.7rem;
+  margin-bottom: 0.3rem;
+  font-size: 0.95rem;
+}
+.field-error {
+  margin-top: 0.2rem;
+  color: #dc3545;
+  font-size: 0.95rem;
+}
+.submit-btn {
+  margin-top: 1.5rem;
+  width: 100%;
+  padding: 0.9rem;
+  font-size: 1.1rem;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #4F8A48 60%, #395B37 100%);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: 1px;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(79,138,72,0.08);
+}
+.submit-btn:hover {
+  background: linear-gradient(90deg, #395B37 60%, #4F8A48 100%);
+  box-shadow: 0 4px 16px rgba(79,138,72,0.13);
+}
+.switch-link {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 1rem;
+}
+.switch-link a {
+  color: #4F8A48;
+  text-decoration: underline;
+  font-weight: 500;
+}
+</style>
+{% endblock %}

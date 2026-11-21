@@ -1,0 +1,253 @@
+{% extends 'landing_page.html' %}
+{% load static %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+  <div class="auth-card">
+    <h2 class="form-title">Create Your Account</h2>
+    {% if form.errors %}
+      <div class="form-errors">
+        {% for field in form %}
+          {% for error in field.errors %}
+            <div class="error-message">{{ error }}</div>
+          {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+          <div class="error-message">{{ error }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+    <form method="post" enctype="multipart/form-data" class="auth-form grid-form" id="signup-form" novalidate>
+      {% csrf_token %}
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="id_first_name">{{ form.first_name.label }}</label>
+          {{ form.first_name }}
+          {% if form.first_name.help_text %}
+            <small class="help-text" id="help-first_name">{{ form.first_name.help_text }}</small>
+          {% endif %}
+          <div class="field-error" id="error-first_name"></div>
+        </div>
+        <div class="form-group">
+          <label for="id_middle_name">{{ form.middle_name.label }}</label>
+          {{ form.middle_name }}
+          {% if form.middle_name.help_text %}
+            <small class="help-text" id="help-middle_name">{{ form.middle_name.help_text }}</small>
+          {% endif %}
+          <div class="field-error" id="error-middle_name"></div>
+        </div>
+        <div class="form-group">
+          <label for="id_last_name">{{ form.last_name.label }}</label>
+          {{ form.last_name }}
+          {% if form.last_name.help_text %}
+            <small class="help-text" id="help-last_name">{{ form.last_name.help_text }}</small>
+          {% endif %}
+          <div class="field-error" id="error-last_name"></div>
+        </div>
+        {% for field in form %}
+          {% if field.name not in 'first_name middle_name last_name' %}
+          <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}
+              <small class="help-text" id="help-{{ field.name }}">{{ field.help_text }}</small>
+            {% endif %}
+            <div class="field-error" id="error-{{ field.name }}"></div>
+          </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+      <button type="submit" class="btn-primary submit-btn">Sign Up</button>
+    </form>
+    <p class="switch-link">Already have an account? <a href="{% url 'accounts:login' %}">Login</a></p>
+  </div>
+</div>
+<style>
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 90vh;
+  background: linear-gradient(120deg, #e5f2e5 0%, #f8f9fa 100%);
+}
+.auth-card {
+  background: #fff;
+  padding: 2.5rem 2rem 2rem 2rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  width: 100%;
+  max-width: 600px;
+}
+.form-title {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  color: #395B37;
+  font-weight: 700;
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.2rem 2rem;
+}
+@media (max-width: 900px) {
+  .form-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 600px) {
+  .auth-card { padding: 1.2rem; }
+  .form-grid { grid-template-columns: 1fr; }
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.2rem;
+}
+.form-group label {
+  font-weight: 500;
+  margin-bottom: 0.2rem;
+  color: #395B37;
+}
+.form-group input, .form-group select, .form-group textarea {
+  width: 100%;
+  padding: 0.6rem 0.7rem;
+  border-radius: 6px;
+  border: 1px solid #b5cbb7;
+  margin-top: 0.1rem;
+  font-size: 1rem;
+  background: #f8f9fa;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+  border: 1.5px solid #4F8A48;
+  outline: none;
+  box-shadow: 0 0 0 2px #e5f2e5;
+}
+.form-errors .error-message {
+  color: #dc3545;
+  background: #ffeaea;
+  border-radius: 4px;
+  padding: 0.3rem 0.7rem;
+  margin-bottom: 0.3rem;
+  font-size: 0.95rem;
+}
+.help-text {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.9rem;
+  color: #888;
+}
+.field-error {
+  margin-top: 0.2rem;
+  color: #dc3545;
+  font-size: 0.95rem;
+}
+.submit-btn {
+  margin-top: 1.5rem;
+  width: 100%;
+  padding: 0.9rem;
+  font-size: 1.1rem;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #4F8A48 60%, #395B37 100%);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: 1px;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(79,138,72,0.08);
+}
+.submit-btn:hover {
+  background: linear-gradient(90deg, #395B37 60%, #4F8A48 100%);
+  box-shadow: 0 4px 16px rgba(79,138,72,0.13);
+}
+.switch-link {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 1rem;
+}
+.switch-link a {
+  color: #4F8A48;
+  text-decoration: underline;
+  font-weight: 500;
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('signup-form');
+    const usernameInput = document.getElementById('id_username');
+    const password1Input = document.getElementById('id_password1');
+    const password2Input = document.getElementById('id_password2');
+    const usernameHelp = document.getElementById('help-username');
+    const password1Help = document.getElementById('help-password1');
+    const password2Help = document.getElementById('help-password2');
+    const usernameError = document.getElementById('error-username');
+    const password1Error = document.getElementById('error-password1');
+    const password2Error = document.getElementById('error-password2');
+    // Username validation
+    if (usernameInput) {
+        usernameInput.addEventListener('input', function() {
+            const usernameRegex = /^[a-zA-Z0-9]+$/;
+            if (!usernameRegex.test(usernameInput.value)) {
+                if (usernameHelp) usernameHelp.style.display = 'block';
+                if (usernameError) usernameError.textContent = 'Username must contain only letters and numbers.';
+            } else {
+                if (usernameHelp) usernameHelp.style.display = 'none';
+                if (usernameError) usernameError.textContent = '';
+            }
+        });
+    }
+    // Password validation
+    if (password1Input) {
+        password1Input.addEventListener('input', function() {
+            if (password1Input.value.length < 8) {
+                if (password1Help) password1Help.style.display = 'block';
+                if (password1Error) password1Error.textContent = 'Password must be at least 8 characters.';
+            } else {
+                if (password1Help) password1Help.style.display = 'none';
+                if (password1Error) password1Error.textContent = '';
+            }
+        });
+    }
+    // Password match validation
+    if (password2Input && password1Input) {
+        password2Input.addEventListener('input', function() {
+            if (password2Input.value !== password1Input.value) {
+                if (password2Help) password2Help.style.display = 'block';
+                if (password2Error) password2Error.textContent = 'Passwords do not match.';
+            } else {
+                if (password2Help) password2Help.style.display = 'none';
+                if (password2Error) password2Error.textContent = '';
+            }
+        });
+    }
+    // On submit, show help text for invalid fields
+    form.addEventListener('submit', function(e) {
+        let valid = true;
+        if (usernameInput && !/^[a-zA-Z0-9]+$/.test(usernameInput.value)) {
+            if (usernameHelp) usernameHelp.style.display = 'block';
+            if (usernameError) usernameError.textContent = 'Username must contain only letters and numbers.';
+            valid = false;
+        }
+        if (password1Input && password1Input.value.length < 8) {
+            if (password1Help) password1Help.style.display = 'block';
+            if (password1Error) password1Error.textContent = 'Password must be at least 8 characters.';
+            valid = false;
+        }
+        if (password2Input && password2Input.value !== password1Input.value) {
+            if (password2Help) password2Help.style.display = 'block';
+            if (password2Error) password2Error.textContent = 'Passwords do not match.';
+            valid = false;
+        }
+        if (!valid) {
+            e.preventDefault();
+        }
+    });
+});
+</script>
+{% endblock %}
