@@ -108,6 +108,16 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
+CSRF_TRUSTED_ORIGINS = [o.strip() for o in str(env_get("CSRF_TRUSTED_ORIGINS", "")).split(",") if o.strip()]
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+if not DEBUG:
+    SECURE_SSL_REDIRECT = str(env_get("SECURE_SSL_REDIRECT", "True")).lower() in {"1","true","yes","on"}
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = int(env_get("SECURE_HSTS_SECONDS", "0"))
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = str(env_get("SECURE_HSTS_INCLUDE_SUBDOMAINS", "False")).lower() in {"1","true","yes","on"}
+    SECURE_HSTS_PRELOAD = str(env_get("SECURE_HSTS_PRELOAD", "False")).lower() in {"1","true","yes","on"}
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 LOGIN_REDIRECT_URL = "products:product_list"
