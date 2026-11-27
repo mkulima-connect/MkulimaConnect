@@ -1,14 +1,17 @@
-﻿import json
+﻿import hashlib
+import hmac
+import json
 import uuid
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from django.utils.decorators import method_decorator
 
 from orders.models import Order
 from .models import Transaction
@@ -61,7 +64,6 @@ def initiate_payment(request, order_id):
         messages.warning(request, response.get("message") or "Payment gateway unavailable.")
         return redirect("orders:order_detail", order_id=order.id)
 
-    # Reserved for when gateway is enabled/implemented.
     tx = Transaction.objects.create(
         user=request.user,
         order=order,
@@ -77,9 +79,25 @@ def initiate_payment(request, order_id):
     return redirect("orders:order_detail", order_id=order.id)
 
 
+def _valid_webhook_secret(request):
+    secret = getattr(settings, "PAYMENT_WEBHOOK_SECRET", "")
+    if not secret:
+        return True
+    provided = request.headers.get("X-Webhook-Secret", "")
+    if provided and hmac.compare_digest(provided, secret):
+        return True
+    signature = request.headers.get("X-Webhook-Signature", "")
+    if signature:
+        digest = hmac.new(secret.encode(), request.body or b"", hashlib.sha256).hexdigest()
+        return hmac.compare_digest(signature, digest)
+    return False
+
+
 @method_decorator(csrf_exempt, name="dispatch")
 class PaymentCallbackView(View):
     def post(self, request):
+        if not _valid_webhook_secret(request):
+            return JsonResponse({"ok": False, "error": "invalid webhook secret"}, status=403)
         try:
             payload = json.loads(request.body.decode("utf-8") or "{}")
         except (json.JSONDecodeError, UnicodeDecodeError):
@@ -88,9 +106,13 @@ class PaymentCallbackView(View):
         status = str(payload.get("status", "")).lower()
         if not tx_id:
             return JsonResponse({"ok": False, "error": "missing transaction id"}, status=400)
-        tx = Transaction.objects.filter(transaction_id=tx_id).first()
+        tx = Transaction.objects.filter(transaction_id=tx_id).select_related("order", "order__product").first()
         if not tx:
             return JsonResponse({"ok": False, "error": "transaction not found"}, status=404)
+
+        if tx.status == Transaction.STATUS_SUCCESS:
+            return JsonResponse({"ok": True, "status": tx.status, "idempotent": True})
+
         tx.raw_response = payload
         if status in {"success", "successful", "paid", "completed"}:
             tx.status = Transaction.STATUS_SUCCESS

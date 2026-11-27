@@ -1,4 +1,4 @@
-﻿from pathlib import Path
+from pathlib import Path
 import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -116,6 +116,7 @@ AUTH_USER_MODEL = "accounts.User"
 PAYMENT_GATEWAY_ENABLED = str(env_get("PAYMENT_GATEWAY_ENABLED", "False")).lower() in {"1","true","yes","on"}
 PYTHON_GATEWAY_URL = env_get("PYTHON_GATEWAY_URL", "")
 PAYMENT_API_TOKEN = env_get("PAYMENT_API_TOKEN", "")
+PAYMENT_WEBHOOK_SECRET = env_get("PAYMENT_WEBHOOK_SECRET", "")
 
 REDIS_URL = env_get("REDIS_URL", "redis://127.0.0.1:6379/0")
 CHANNEL_LAYERS = {"default": {"BACKEND": "channels_redis.core.RedisChannelLayer", "CONFIG": {"hosts": [REDIS_URL]}}}

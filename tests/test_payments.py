@@ -4,6 +4,7 @@ from orders.models import Order
 from payments.models import Transaction
 from products.models import Product
 from tests import ModelTestMixin
+from django.test import override_settings
 
 
 class PaymentTests(ModelTestMixin):
@@ -31,5 +32,15 @@ class PaymentTests(ModelTestMixin):
         self.assertEqual(res.status_code, 200)
         tx.refresh_from_db()
         self.order.refresh_from_db()
+        self.product.refresh_from_db()
         self.assertEqual(tx.status, Transaction.STATUS_SUCCESS)
         self.assertEqual(self.order.status, Order.STATUS_PAID)
+        self.assertEqual(self.product.quantity, 8)
+
+    @override_settings(PAYMENT_WEBHOOK_SECRET="secret123")
+    def test_callback_rejects_bad_secret(self):
+        tx = Transaction.objects.create(user=self.buyer, order=self.order, product=self.product, amount=self.order.total_price, transaction_id="TX-2")
+        res = self.client.post(reverse("payments:callback"), data='{"externalId":"TX-2","status":"success"}', content_type="application/json")
+        self.assertEqual(res.status_code, 403)
+        tx.refresh_from_db()
+        self.assertEqual(tx.status, Transaction.STATUS_PENDING)
