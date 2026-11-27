@@ -3,6 +3,18 @@
 {% block content %}
 <div class="card">
   <h1>Subscriptions</h1>
-  <p class="muted">Subscription management placeholder. Wire plan selection and payment flow here.</p>
+  {% if current and current.is_current %}
+    <p><strong>Current plan:</strong> {{ current.get_plan_display }} (expires {{ current.expires_at }})</p>
+  {% else %}
+    <p class="muted">No active subscription.</p>
+  {% endif %}
+</div>
+<div class="card">
+  <h2>Choose plan</h2>
+  <form method="post" action="{% url 'subscriptions:activate' %}">{% csrf_token %}
+    <p><label><input type="radio" name="plan" value="basic" checked> Basic (30 days)</label></p>
+    <p><label><input type="radio" name="plan" value="premium"> Premium (30 days)</label></p>
+    <button class="btn-primary" type="submit">Activate</button>
+  </form>
 </div>
 {% endblock %}

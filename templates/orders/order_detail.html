@@ -1,11 +1,37 @@
 ﻿{% extends "base.html" %}
-{% block title %}Order{% endblock %}
+{% block title %}Order #{{ order.id }}{% endblock %}
 {% block content %}
 <div class="card">
   <h1>Order #{{ order.id }}</h1>
   <p><strong>Product:</strong> {{ order.product.name }}</p>
+  <p><strong>Buyer:</strong> {{ order.buyer.username }}</p>
+  <p><strong>Farmer:</strong> {{ order.farmer.username }}</p>
   <p><strong>Quantity:</strong> {{ order.quantity }}</p>
   <p><strong>Total:</strong> {{ order.total_price }} TZS</p>
   <p><strong>Status:</strong> {{ order.status }}</p>
+  <p><strong>Reference:</strong> {{ order.external_id }}</p>
+</div>
+
+{% if user.id == order.buyer_id and order.is_payable %}
+<div class="card">
+  <h2>Pay for this order</h2>
+  <form method="post" action="{% url 'payments:initiate' order.id %}">{% csrf_token %}
+    <p><label>Provider <input name="provider" value="azam"></label></p>
+    <p><label>Account / Phone number <input name="account_number" required></label></p>
+    <button class="btn-primary" type="submit">Initiate Payment</button>
+  </form>
+  <form method="post" action="{% url 'orders:cancel_order' order.id %}" style="margin-top:.5rem;">{% csrf_token %}
+    <button class="btn" type="submit">Cancel Order</button>
+  </form>
+</div>
+{% endif %}
+
+<div class="card">
+  <h2>Transactions</h2>
+  {% for tx in order.transactions.all %}
+    <p>{{ tx.transaction_id }} - {{ tx.status }} - {{ tx.amount }} {{ tx.currency }}</p>
+  {% empty %}
+    <p class="muted">No transactions yet.</p>
+  {% endfor %}
 </div>
 {% endblock %}

@@ -1,0 +1,17 @@
+﻿{% extends "base.html" %}
+{% block title %}My Orders{% endblock %}
+{% block content %}
+<div class="card"><h1>My Orders</h1></div>
+<div class="card">
+  <h2>Purchases</h2>
+  {% for order in bought_orders %}
+    <p><a href="{% url 'orders:order_detail' order.id %}">#{{ order.id }}</a> - {{ order.product.name }} - {{ order.status }} - {{ order.total_price }} TZS</p>
+  {% empty %}<p class="muted">No purchases.</p>{% endfor %}
+</div>
+<div class="card">
+  <h2>Sales</h2>
+  {% for order in sold_orders %}
+    <p><a href="{% url 'orders:order_detail' order.id %}">#{{ order.id }}</a> - {{ order.product.name }} - {{ order.status }} - {{ order.total_price }} TZS</p>
+  {% empty %}<p class="muted">No sales.</p>{% endfor %}
+</div>
+{% endblock %}

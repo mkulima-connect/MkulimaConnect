@@ -1,0 +1,10 @@
+﻿{% extends "base.html" %}
+{% block title %}Payments{% endblock %}
+{% block content %}
+<div class="card"><h1>My Payments</h1></div>
+<div class="card">
+  {% for tx in transactions %}
+    <p>{{ tx.transaction_id }} - {{ tx.status }} - {{ tx.amount }} {{ tx.currency }} {% if tx.order_id %}(Order <a href="{% url 'orders:order_detail' tx.order_id %}">#{{ tx.order_id }}</a>){% endif %}</p>
+  {% empty %}<p class="muted">No transactions.</p>{% endfor %}
+</div>
+{% endblock %}

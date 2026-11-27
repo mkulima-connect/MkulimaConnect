@@ -3,7 +3,8 @@
 {% block content %}
 <div class="card">
   <h1>Chat: {{ room_name }}</h1>
-  <pre id="log" style="height:240px;overflow:auto;background:#f4f4f4;padding:1rem;"></pre>
+  <pre id="log" style="height:240px;overflow:auto;background:#f4f4f4;padding:1rem;">{% for m in chat_messages %}[{{ m.timestamp|date:"H:i" }}] {{ m.sender.username }}: {{ m.content }}
+{% endfor %}</pre>
   <input id="message-input" placeholder="Type message...">
   <button class="btn-primary" id="send">Send</button>
 </div>
@@ -14,6 +15,7 @@ const chatSocket = new WebSocket(wsScheme + "://" + window.location.host + "/ws/
 chatSocket.onmessage = (e) => { const d = JSON.parse(e.data); document.getElementById('log').textContent += `[${d.timestamp||''}] ${d.sender}: ${d.message}\n`; };
 document.getElementById('send').onclick = () => {
   const input = document.getElementById('message-input');
+  if (!input.value.trim()) return;
   chatSocket.send(JSON.stringify({message: input.value}));
   input.value = '';
 };

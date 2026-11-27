@@ -7,13 +7,14 @@
   <p><strong>Price:</strong> {{ product.price }} TZS</p>
   <p><strong>Location:</strong> {{ product.location }}</p>
   <p><strong>Category:</strong> {{ product.category|default:"-" }}</p>
-  <p><strong>Quantity:</strong> {{ product.quantity }}</p>
+  <p><strong>Available:</strong> {{ product.quantity }}</p>
   <p><strong>Farmer:</strong> {{ product.farmer.username }}</p>
-  {% if user.is_authenticated and user.role == 'buyer' %}
+  {% if user.is_authenticated and user.id != product.farmer_id %}
     <form method="post" action="{% url 'orders:place_order' product.pk %}">{% csrf_token %}
-      <p><label>Quantity <input type="number" name="quantity" value="1" min="1"></label></p>
+      <p><label>Quantity <input type="number" name="quantity" value="1" min="1" max="{{ product.quantity }}"></label></p>
       <button class="btn-primary" type="submit">Place Order</button>
     </form>
+    <p><a class="btn" href="{% url 'chat:room' product.id %}">Chat about this product</a></p>
   {% endif %}
 </div>
 <div class="card">
