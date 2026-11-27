@@ -14,11 +14,12 @@
 
 {% if user.id == order.buyer_id and order.is_payable %}
 <div class="card">
-  <h2>Pay for this order</h2>
+  <h2>Payment</h2>
+  <p class="muted">Online payment gateway is currently suspended. You can keep the order pending until gateway setup is enabled.</p>
   <form method="post" action="{% url 'payments:initiate' order.id %}">{% csrf_token %}
-    <p><label>Provider <input name="provider" value="azam"></label></p>
+    <p><label>Provider <input name="provider" value="manual"></label></p>
     <p><label>Account / Phone number <input name="account_number" required></label></p>
-    <button class="btn-primary" type="submit">Initiate Payment</button>
+    <button class="btn-primary" type="submit">Check Payment Gateway</button>
   </form>
   <form method="post" action="{% url 'orders:cancel_order' order.id %}" style="margin-top:.5rem;">{% csrf_token %}
     <button class="btn" type="submit">Cancel Order</button>

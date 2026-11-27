@@ -1,33 +1,26 @@
-﻿import requests
-from django.conf import settings
+﻿from django.conf import settings
 
 
 class PaymentGatewayService:
+    """Payment gateway integration is intentionally suspended.
+
+    Set PAYMENT_GATEWAY_ENABLED=True and configure PYTHON_GATEWAY_URL when ready.
+    """
+
     @staticmethod
-    def send_payment(*, account_number, amount, currency, external_id, provider="azam", additional_properties=None):
-        base_url = (settings.PYTHON_GATEWAY_URL or "").rstrip("/")
+    def send_payment(*, account_number, amount, currency, external_id, provider="manual", additional_properties=None):
+        enabled = str(getattr(settings, "PAYMENT_GATEWAY_ENABLED", "False")).lower() in {"1", "true", "yes", "on"}
+        if not enabled:
+            return {
+                "ok": False,
+                "status": "suspended",
+                "message": "Payment gateway is suspended. Configure and enable it before processing payments.",
+            }
+        base_url = (getattr(settings, "PYTHON_GATEWAY_URL", "") or "").rstrip("/")
         if not base_url:
             return {"ok": False, "status": "config_missing", "message": "PYTHON_GATEWAY_URL is not configured"}
-        payload = {
-            "accountNumber": account_number,
-            "amount": str(amount),
-            "currency": currency,
-            "externalId": external_id,
-            "provider": provider,
-            "additionalProperties": additional_properties or {},
+        return {
+            "ok": False,
+            "status": "not_implemented",
+            "message": "Gateway is enabled but provider adapter is not implemented in this build.",
         }
-        headers = {"Content-Type": "application/json"}
-        token = getattr(settings, "PAYMENT_API_TOKEN", "")
-        if token:
-            headers["Authorization"] = f"Bearer {token}"
-        try:
-            response = requests.post(f"{base_url}/mno-checkout", json=payload, headers=headers, timeout=20)
-        except requests.RequestException as exc:
-            return {"ok": False, "status": "error", "message": str(exc)}
-        try:
-            data = response.json()
-        except ValueError:
-            data = {"raw": response.text}
-        data["ok"] = response.ok
-        data["http_status"] = response.status_code
-        return data

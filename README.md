@@ -1,6 +1,6 @@
 # Mkulima App
 
-**Mkulima App** is a full-stack Django application that connects farmers and buyers in a streamlined marketplace. It provides product listings, real-time chat, secure payments, and subscription management — all designed to help farmers reach a wider audience and buyers find the best deals.
+**Mkulima App** is a full-stack Django application that connects farmers and buyers in a streamlined marketplace. It provides product listings, real-time chat, secure payments, and subscription management â€” all designed to help farmers reach a wider audience and buyers find the best deals.
 
 ## Table of Contents
 
@@ -32,7 +32,7 @@
    - Instant communication between buyers and farmers.
 
 4. **Payments & Subscriptions**  
-   - AzamPay integration for secure transactions.  
+   - Payment gateway integration (suspended by default; configurable when ready).  
    - Tiered subscription plans (e.g., Basic, Premium) with expiry dates.
 
 5. **Admin Dashboard**  
@@ -46,7 +46,7 @@
 - **Language:** Python 3.9+  
 - **Framework:** Django 3.2+ (including Django Channels for real-time features)  
 - **Database:** PostgreSQL (recommended), or any other supported RDBMS  
-- **Payment Integration:** AzamPay API  
+- **Payment Integration:** Gateway adapter (suspended by default)  
 - **Front-End:** Django Templates, HTML5, CSS (Tailwind or Bootstrap recommended), JavaScript  
 - **Real-Time:** Redis (as the Channels layer backend)  
 - **Deployment:** Gunicorn & Nginx (production), Docker (optional)
@@ -62,7 +62,7 @@ flowchart LR
     C -->|HTTP| D[Products, Accounts, Payments, etc.]
     C -->|WebSockets| E[Channels + Redis]
     D --> F[(PostgreSQL DB)]
-    C -->|API| G[AzamPay Service]
+    C -->|API| G[Payment Gateway (suspended)]
 ```
 
 1. **Client** interacts via Django templates and WebSockets for real-time chat.  
@@ -138,7 +138,7 @@ flowchart LR
 
 6. **Subscription & Payments:**  
    - Subscribe at `/subscriptions/subscribe/`.  
-   - Process payments at `/payments/initiate/` using AzamPay.
+   - Process payments at `/payments/initiate/<order_id>/` (gateway suspended by default until configured).
 
 7. **Admin Panel:**  
    - `/admin/` to manage users, products, and transactions.
@@ -149,19 +149,19 @@ flowchart LR
 
 `
 MkulimaConnect/
-├── MkulimaSystem/        # Django project (settings, urls, asgi/wsgi)
-├── accounts/             # Custom user, auth, profile
-├── products/             # Product listings, reviews
-├── orders/               # Order placement/detail
-├── payments/             # Transactions/payment gateway integration
-├── chat/                 # Channels consumers/routing
-├── subscriptions/        # Subscription plans
-├── templates/            # Django templates
-├── static/               # Static assets
-├── manage.py
-├── requirements.txt
-├── .env.example
-└── README.md
+â”œâ”€â”€ MkulimaSystem/        # Django project (settings, urls, asgi/wsgi)
+â”œâ”€â”€ accounts/             # Custom user, auth, profile
+â”œâ”€â”€ products/             # Product listings, reviews
+â”œâ”€â”€ orders/               # Order placement/detail
+â”œâ”€â”€ payments/             # Transactions/payment gateway integration
+â”œâ”€â”€ chat/                 # Channels consumers/routing
+â”œâ”€â”€ subscriptions/        # Subscription plans
+â”œâ”€â”€ templates/            # Django templates
+â”œâ”€â”€ static/               # Static assets
+â”œâ”€â”€ manage.py
+â”œâ”€â”€ requirements.txt
+â”œâ”€â”€ .env.example
+â””â”€â”€ README.md
 `
 
 > Note: This repository was reconstructed from a flattened upload. Some modules are baseline scaffolding and should be validated against intended business logic before production use.
@@ -187,7 +187,8 @@ ALLOWED_HOSTS=127.0.0.1,localhost
 # Channels/Redis
 REDIS_URL=redis://127.0.0.1:6379/0
 
-# Payment gateway
+# Payments (gateway suspended by default)
+PAYMENT_GATEWAY_ENABLED=False
 PYTHON_GATEWAY_URL=
 PAYMENT_API_TOKEN=
 ```
@@ -220,7 +221,7 @@ python manage.py test
 4. **Push** to your fork (`git push origin feature/new-feature`).  
 5. Open a **Pull Request** to the main branch of this repository.
 
-Please make sure your code adheres to the project’s coding standards and includes relevant tests.
+Please make sure your code adheres to the projectâ€™s coding standards and includes relevant tests.
 
 ---
 
