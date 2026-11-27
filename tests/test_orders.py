@@ -23,7 +23,12 @@ class OrderTests(ModelTestMixin):
 
     def test_cannot_order_own_product(self):
         self.client.force_login(self.farmer)
-        res = self.client.post(reverse("orders:place_order", args=[self.product.id]), {"quantity": 1}, follow=True)
+        self.client.post(reverse("orders:place_order", args=[self.product.id]), {"quantity": 1}, follow=True)
+        self.assertEqual(Order.objects.count(), 0)
+
+    def test_cannot_order_more_than_stock(self):
+        self.client.force_login(self.buyer)
+        res = self.client.post(reverse("orders:place_order", args=[self.product.id]), {"quantity": 99}, follow=True)
         self.assertEqual(Order.objects.count(), 0)
         self.assertEqual(res.status_code, 200)
 

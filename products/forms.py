@@ -12,6 +12,18 @@ class ProductForm(forms.ModelForm):
             "image": "Crop Image",
         }
 
+    def clean_price(self):
+        price = self.cleaned_data["price"]
+        if price <= 0:
+            raise forms.ValidationError("Price must be greater than zero.")
+        return price
+
+    def clean_quantity(self):
+        qty = self.cleaned_data["quantity"]
+        if qty < 0:
+            raise forms.ValidationError("Quantity cannot be negative.")
+        return qty
+
 
 class ReviewForm(forms.ModelForm):
     RATING_CHOICES = [(i, f"{i} ★") for i in range(1, 6)]
