@@ -1,0 +1,12 @@
+﻿{% extends "base.html" %}
+{% block title %}Place Order{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>Place Order</h1>
+  <p><strong>{{ product.name }}</strong> - {{ product.price }} TZS</p>
+  <form method="post">{% csrf_token %}
+    <p><label>Quantity <input type="number" name="quantity" min="1" value="1"></label></p>
+    <button class="btn-primary" type="submit">Confirm Order</button>
+  </form>
+</div>
+{% endblock %}

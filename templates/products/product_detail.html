@@ -1,0 +1,31 @@
+﻿{% extends "base.html" %}
+{% block title %}{{ product.name }}{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>{{ product.name }}</h1>
+  <p>{{ product.description }}</p>
+  <p><strong>Price:</strong> {{ product.price }} TZS</p>
+  <p><strong>Location:</strong> {{ product.location }}</p>
+  <p><strong>Category:</strong> {{ product.category|default:"-" }}</p>
+  <p><strong>Quantity:</strong> {{ product.quantity }}</p>
+  <p><strong>Farmer:</strong> {{ product.farmer.username }}</p>
+  {% if user.is_authenticated and user.role == 'buyer' %}
+    <form method="post" action="{% url 'orders:place_order' product.pk %}">{% csrf_token %}
+      <p><label>Quantity <input type="number" name="quantity" value="1" min="1"></label></p>
+      <button class="btn-primary" type="submit">Place Order</button>
+    </form>
+  {% endif %}
+</div>
+<div class="card">
+  <h2>Reviews</h2>
+  {% for review in reviews %}
+    <p><strong>{{ review.user.username }}</strong>: {{ review.rating }}★ - {{ review.comment }}</p>
+  {% empty %}
+    <p class="muted">No reviews yet.</p>
+  {% endfor %}
+  {% if user.is_authenticated %}
+  <h3>Add review</h3>
+  <form method="post">{% csrf_token %}{{ form.as_p }}<button class="btn-primary" type="submit">Submit</button></form>
+  {% endif %}
+</div>
+{% endblock %}

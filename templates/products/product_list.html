@@ -1,0 +1,20 @@
+﻿{% extends "base.html" %}
+{% block title %}Products{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>Marketplace</h1>
+  <p class="muted">Browse products from farmers.</p>
+</div>
+<div class="grid">
+  {% for product in products %}
+  <div class="card">
+    <h3><a href="{% url 'products:product_detail' product.pk %}">{{ product.name }}</a></h3>
+    <p>{{ product.description|truncatewords:20 }}</p>
+    <p><strong>{{ product.price }} TZS</strong> · {{ product.location }}</p>
+    <p class="muted">By {{ product.farmer.username }}</p>
+  </div>
+  {% empty %}
+  <div class="card">No products yet.</div>
+  {% endfor %}
+</div>
+{% endblock %}

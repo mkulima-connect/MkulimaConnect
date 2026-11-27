@@ -1,0 +1,21 @@
+﻿{% extends "base.html" %}
+{% block title %}Chat{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>Chat: {{ room_name }}</h1>
+  <pre id="log" style="height:240px;overflow:auto;background:#f4f4f4;padding:1rem;"></pre>
+  <input id="message-input" placeholder="Type message...">
+  <button class="btn-primary" id="send">Send</button>
+</div>
+<script>
+const roomName = "{{ room_name }}";
+const wsScheme = window.location.protocol === "https:" ? "wss" : "ws";
+const chatSocket = new WebSocket(wsScheme + "://" + window.location.host + "/ws/chat/" + roomName + "/");
+chatSocket.onmessage = (e) => { const d = JSON.parse(e.data); document.getElementById('log').textContent += `[${d.timestamp||''}] ${d.sender}: ${d.message}\n`; };
+document.getElementById('send').onclick = () => {
+  const input = document.getElementById('message-input');
+  chatSocket.send(JSON.stringify({message: input.value}));
+  input.value = '';
+};
+</script>
+{% endblock %}
